@@ -96,28 +96,17 @@ SoundStripeView.prototype.render = function() {
   var $el = this.$el;
   $el.show();
 
-  $el.append(this.template(this.model.attributes()));
+  var spinnerDisplayID = setTimeout(function() {
+    $el.find("#spinner").show();
+  }, 500);
 
+  $el.append(this.template(this.model.attributes()));
   $el.find("audio").on("playing", function() {
+    clearTimeout(spinnerDisplayID);
     $el.find("#spinner").hide();
     $el.find("#instagram-image").fadeIn();
   });
 }
-
-$(document).ready(function() {
-  var photoSong = new SoundStripe();
-
-  if(window.location.href.indexOf("instagramId") != -1 ) {
-   var model = new SoundStripe(getParameterByName("instagramId"),
-                               getParameterByName("songUrl"));
-   var view = new SoundStripeView("#sound-stripe-presentation", model);
-   view.render();
-
-  } else {
-    var view = new SoundStripeWizardView("#sound-stripe-builder", photoSong);
-    view.render();
-  }
-});
 
 function getParameterByName(name) {
   name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
@@ -125,3 +114,21 @@ function getParameterByName(name) {
   results = regex.exec(location.search);
   return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
+$(document).ready(function() {
+  var photoSong = new SoundStripe();
+
+  if(getParameterByName("instagramId") &&
+     getParameterByName("songUrl")) {
+
+    var model = new SoundStripe(getParameterByName("instagramId"),
+                                getParameterByName("songUrl"));
+    var view = new SoundStripeView("#sound-stripe-presentation", model);
+    view.render();
+
+  } else {
+    var view = new SoundStripeWizardView("#sound-stripe-builder", photoSong);
+    view.render();
+  }
+});
+
