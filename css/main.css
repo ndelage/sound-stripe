@@ -74,6 +74,29 @@ textarea {
   height: 306px;
 }
 
+#song-search-results {
+  list-style-type: none;
+}
+
+#song-search-results input {
+  display: inline;
+}
+
+#instagram-song {
+  width: 306px;
+  height: 306px;
+  position: relative;
+}
+
+#spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+#instagram-image {
+  display:none;
+}
 
 
 /* ==========================================================================
