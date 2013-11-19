@@ -60,17 +60,19 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+#wizard {
+  display: none;
+}
 
+#wizard input {
+  display: block;
+  margin: 20px;
+}
 
-
-
-
-
-
-
-
-
-
+#image-preview {
+  width: 306px;
+  height: 306px;
+}
 
 
 
