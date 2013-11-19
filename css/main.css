@@ -60,11 +60,11 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-#wizard {
+#sound-stripe-builder {
   display: none;
 }
 
-#wizard input {
+#sound-stripe-builder input {
   display: block;
   margin: 20px;
 }
@@ -82,10 +82,11 @@ textarea {
   display: inline;
 }
 
-#instagram-song {
+#sound-stripe-presentation {
   width: 306px;
   height: 306px;
   position: relative;
+  display: none;
 }
 
 #spinner {

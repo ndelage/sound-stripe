@@ -36,13 +36,14 @@ function SoundStripeWizardView(selector, model) {
   this.songResultTemplate = _.template("<li data-preview-url='<%=preview_url%>'><label><input type='radio' name='song'><%=artist_name%> - <%=title%><label></li>");
 
   _.bindAll(this, 'updateInstagram', 'searchSong', 'generateThing')
-  $("#instagram-url").on('change', this.updateInstagram);
-  $("#song-title").on('change', this.searchSong);
-  $("#wizard").submit(this.generateThing);
+  this.$el.find("#instagram-url").on('change', this.updateInstagram);
+  this.$el.find("#song-title").on('change', this.searchSong);
+
+  this.$el.find("form").submit(this.generateThing);
 }
 
 
-SoundStripeWizardView.prototype.show = function(e) {
+SoundStripeWizardView.prototype.render = function(e) {
   this.$el.show();
 }
 
@@ -90,19 +91,21 @@ function SoundStripeView(selector, model) {
   this.model = model;
   this.template = _.template("<img id='instagram-image' src='<%=imageUrl%>'><audio autoplay=true src='<%=songUrl%>'></audio>");
 }
-SoundStripeView.prototype.render = function() {
-  var self = this;
-  this.$el.append(this.template(this.model.attributes()));
 
-  this.$el.find("audio").on("playing", function() {
-    self.$el.find("#spinner").hide();
-    self.$el.find("#instagram-image").fadeIn();
+SoundStripeView.prototype.render = function() {
+  var $el = this.$el;
+  $el.show();
+
+  $el.append(this.template(this.model.attributes()));
+
+  $el.find("audio").on("playing", function() {
+    $el.find("#spinner").hide();
+    $el.find("#instagram-image").fadeIn();
   });
 }
 
 $(document).ready(function() {
   var photoSong = new SoundStripe();
-  var view = new SoundStripeWizardView("#wizard", photoSong);
 
   if(window.location.href.indexOf("instagramId") != -1 ) {
    var model = new SoundStripe(getParameterByName("instagramId"),
@@ -111,7 +114,8 @@ $(document).ready(function() {
    view.render();
 
   } else {
-    view.show();
+    var view = new SoundStripeWizardView("#sound-stripe-builder", photoSong);
+    view.render();
   }
 });
 
