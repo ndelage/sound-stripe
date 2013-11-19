@@ -30,6 +30,8 @@ var EchoNest = {
 function InstagramSongWizardView(selector, model) {
   this.$el = $(selector);
   this.model = model;
+  this.songResultTemplate = _.template("<li data-preview-url='<%=preview_url%>'><%=artist_name%> - <%=title%></li>");
+
   _.bindAll(this, 'updateInstagram', 'searchSong', 'generateThing')
   $("#instagram-url").on('change', this.updateInstagram);
   $("#song-title").on('change', this.searchSong);
@@ -57,10 +59,18 @@ InstagramSongWizardView.prototype.searchSong = function(e) {
 };
 
 InstagramSongWizardView.prototype.updateSearchResults = function(songs) {
-   this.$el.find("#song-search-results").html('');
-   _.each(songs, function(s) {
-     $("#song-search-results").append("<li>" + s.artist_name + " - " + s.title + "</li>");
-   });
+  var self = this;
+  this.$el.find("#song-search-results").html('');
+  var withPreviews = _.select(songs, function(s) {
+    return s.tracks.length > 0;
+  });
+
+  _.each(withPreviews, function(s) {
+    var result = self.songResultTemplate({artist_name: s.artist_name,
+                                          title: s.title,
+                                          preview_url: s.tracks[0].preview_url});
+    $("#song-search-results").append(result);
+  });
 };
 
 InstagramSongWizardView.prototype.generateThing = function(e) {
