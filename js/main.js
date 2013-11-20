@@ -35,12 +35,15 @@ function SoundStripeFormView(selector, model) {
   this.model = model;
   this.template = _.template($("#sound-stripe-new-template").html());
   this.songResultTemplate = _.template($("#song-search-result-template").html());
+  this.linkTemplate = _.template($("#sound-stripe-link-template").html());
 
-  _.bindAll(this, 'updateInstagram', 'searchSong', 'generateThing')
+  this.render();
+
+  _.bindAll(this, 'updateInstagram', 'searchSong', 'generateLink')
   this.$el.find("#instagram-url").on('change', this.updateInstagram);
   this.$el.find("#song-title").on('change', this.searchSong);
 
-  this.$el.find("form").submit(this.generateThing);
+  this.$el.find("form").submit(this.generateLink);
 }
 
 
@@ -78,12 +81,17 @@ SoundStripeFormView.prototype.updateSearchResults = function(songs) {
   });
 };
 
-SoundStripeFormView.prototype.generateThing = function(e) {
+SoundStripeFormView.prototype.generateLink = function(e) {
   e.preventDefault();
   var selectedSong = this.$el.find("input[name=song]:checked");
   var songUrl = selectedSong.parents("li").data("preview-url");
-  var url = window.location.origin + "/?songUrl=" + songUrl + "&instagramId=" + this.model.instagramId;
-  this.$el.find("#final-link").html("<a href='" + url + "'>" + url + "</a>");
+  var url = window.location.origin +
+            "/?songUrl=" +
+            songUrl +
+            "&instagramId=" +
+            this.model.instagramId;
+
+  this.$el.find("#final-link").html(this.linkTemplate({url: url}));
 }
 
 
@@ -91,6 +99,7 @@ function SoundStripeView(selector, model) {
   this.$el = $(selector);
   this.model = model;
   this.template = _.template($("#sound-stripe-template").html());
+  this.render();
 }
 
 SoundStripeView.prototype.render = function() {
@@ -125,11 +134,8 @@ $(document).ready(function() {
     var model = new SoundStripe(getParameterByName("instagramId"),
                                 getParameterByName("songUrl"));
     var view = new SoundStripeView("#sound-stripe-presentation", model);
-    view.render();
-
   } else {
     var view = new SoundStripeFormView("#sound-stripe-builder", photoSong);
-    view.render();
   }
 });
 
