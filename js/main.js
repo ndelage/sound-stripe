@@ -4,14 +4,26 @@ function SoundStripe(instagramId, songUrl) {
 }
 
 SoundStripe.prototype.loadInstagramUrl = function(url) {
-  this.instagramId = /p\/(\w+)/.exec(url)[1];
+  var matches = /p\/(\w+)/.exec(url);
+  if(matches && matches.length > 1) {
+    this.instagramId = matches[1];
+  }
 }
 
 SoundStripe.prototype.imageUrl = function() {
-  return "http://instagr.am/p/" + this.instagramId + "/media/?size=m";
+  if(this.instagramId) {
+    return "http://instagr.am/p/" + this.instagramId + "/media/?size=m";
+  } else {
+    return null;
+  }
 }
+
 SoundStripe.prototype.attributes = function() {
   return {songUrl: this.songUrl, imageUrl: this.imageUrl()};
+}
+
+SoundStripe.prototype.valid = function() {
+  return this.songUrl && this.instagramId;
 }
 
 var EchoNest = {
@@ -36,12 +48,18 @@ function SoundStripeFormView(selector, model) {
   this.template = _.template($("#sound-stripe-new-template").html());
   this.songResultTemplate = _.template($("#song-search-result-template").html());
   this.linkTemplate = _.template($("#sound-stripe-link-template").html());
+  this.oldQuery = null;
 
   this.render();
 
-  _.bindAll(this, 'updateInstagram', 'searchSong', 'generateLink')
-  this.$el.find("#instagram-url").on('change', this.updateInstagram);
-  this.$el.find("#song-title").on('change', this.searchSong);
+  _.bindAll(this, 'updateInstagram',
+                  'searchSong',
+                  'generateLink',
+                  'selectSong');
+
+  this.$el.on("input", "#instagram-url", this.updateInstagram);
+  this.$el.on("input", "#song-title", _.debounce(this.searchSong, 500));
+  this.$el.find("#song-search-results").on('change','input', this.selectSong);
 
   this.$el.find("form").submit(this.generateLink);
 }
@@ -53,17 +71,28 @@ SoundStripeFormView.prototype.render = function(e) {
 
 SoundStripeFormView.prototype.updateInstagram = function(e) {
   var instagramUrl = this.$el.find("#instagram-url").val();
-  this.model.loadInstagramUrl(instagramUrl);
-  this.$el.find("#image-preview").attr('src', this.model.imageUrl());
+  if(instagramUrl.length > 0) {
+    this.model.loadInstagramUrl(instagramUrl);
+    if(this.model.imageUrl()) {
+      this.$el.find("#image-preview").attr('src', this.model.imageUrl());
+    }
+  }
 };
 
 SoundStripeFormView.prototype.searchSong = function(e) {
   var self = this;
-  EchoNest.search(this.$el.find("#song-title").val())
-           .done(function(resp) {
-             self.updateSearchResults(resp.response.songs);
-           });
+  var query = this.$el.find("#song-title").val();
+  if(this.oldQuery != query && query.length > 4) {
+    console.log("searching");
+    EchoNest.search(query)
+             .done(function(resp) {
+               self.updateSearchResults(resp.response.songs);
+             });
+  } else if(query.length == 0) {
+    this.$el.find("#song-search-results").html('');
+  }
 
+  this.oldQuery = query;
 };
 
 SoundStripeFormView.prototype.updateSearchResults = function(songs) {
@@ -81,17 +110,27 @@ SoundStripeFormView.prototype.updateSearchResults = function(songs) {
   });
 };
 
+
+SoundStripeFormView.prototype.selectSong = function(e) {
+  console.log("here");
+  var selectedSong = this.$el.find("input[name=song]:checked");
+  this.model.songUrl = selectedSong.parents("li").data("preview-url");
+};
+
 SoundStripeFormView.prototype.generateLink = function(e) {
   e.preventDefault();
-  var selectedSong = this.$el.find("input[name=song]:checked");
-  var songUrl = selectedSong.parents("li").data("preview-url");
-  var url = window.location.origin +
-            "/?songUrl=" +
-            songUrl +
-            "&instagramId=" +
-            this.model.instagramId;
+  this.updateInstagram();
+  if(this.model.valid()) {
+    var url = window.location.origin +
+              "/?songUrl=" +
+              this.model.songUrl +
+              "&instagramId=" +
+              this.model.instagramId;
 
-  this.$el.find("#final-link").html(this.linkTemplate({url: url}));
+    this.$el.find("#final-link").html(this.linkTemplate({url: url}));
+  } else {
+    alert("Not so fast! Enter a instagram url and pick a song first!");
+  }
 }
 
 
