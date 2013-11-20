@@ -30,9 +30,10 @@ var EchoNest = {
   }
 }
 
-function SoundStripeWizardView(selector, model) {
+function SoundStripeFormView(selector, model) {
   this.$el = $(selector);
   this.model = model;
+  this.template = _.template($("#sound-stripe-new-template").html());
   this.songResultTemplate = _.template($("#song-search-result-template").html());
 
   _.bindAll(this, 'updateInstagram', 'searchSong', 'generateThing')
@@ -43,17 +44,17 @@ function SoundStripeWizardView(selector, model) {
 }
 
 
-SoundStripeWizardView.prototype.render = function(e) {
-  this.$el.show();
+SoundStripeFormView.prototype.render = function(e) {
+  this.$el.html(this.template({}));
 }
 
-SoundStripeWizardView.prototype.updateInstagram = function(e) {
+SoundStripeFormView.prototype.updateInstagram = function(e) {
   var instagramUrl = this.$el.find("#instagram-url").val();
   this.model.loadInstagramUrl(instagramUrl);
   this.$el.find("#image-preview").attr('src', this.model.imageUrl());
 };
 
-SoundStripeWizardView.prototype.searchSong = function(e) {
+SoundStripeFormView.prototype.searchSong = function(e) {
   var self = this;
   EchoNest.search(this.$el.find("#song-title").val())
            .done(function(resp) {
@@ -62,7 +63,7 @@ SoundStripeWizardView.prototype.searchSong = function(e) {
 
 };
 
-SoundStripeWizardView.prototype.updateSearchResults = function(songs) {
+SoundStripeFormView.prototype.updateSearchResults = function(songs) {
   var self = this;
   this.$el.find("#song-search-results").html('');
   var withPreviews = _.select(songs, function(s) {
@@ -77,7 +78,7 @@ SoundStripeWizardView.prototype.updateSearchResults = function(songs) {
   });
 };
 
-SoundStripeWizardView.prototype.generateThing = function(e) {
+SoundStripeFormView.prototype.generateThing = function(e) {
   e.preventDefault();
   var selectedSong = this.$el.find("input[name=song]:checked");
   var songUrl = selectedSong.parents("li").data("preview-url");
@@ -127,7 +128,7 @@ $(document).ready(function() {
     view.render();
 
   } else {
-    var view = new SoundStripeWizardView("#sound-stripe-builder", photoSong);
+    var view = new SoundStripeFormView("#sound-stripe-builder", photoSong);
     view.render();
   }
 });

@@ -60,10 +60,6 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-#sound-stripe-builder {
-  display: none;
-}
-
 #sound-stripe-builder input {
   display: block;
   margin: 20px;

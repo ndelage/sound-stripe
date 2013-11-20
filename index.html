@@ -21,15 +21,6 @@
         <![endif]-->
 
         <div id="sound-stripe-builder">
-          <form id="wizard" action="#">
-            <img id="image-preview">
-            <input type="textbox", id="instagram-url" name="instagram-url" placeholder="instagram url" />
-            <input type="textbox", id="song-title" name="song" placeholder="artist - song title"/>
-            <ul id="song-search-results"></ul>
-            <input type="submit" value="Generate InstagramSong Link"/>
-            <div id="final-link">
-            </div>
-          </form>
         </div>
 
         <div id="sound-stripe-presentation">
@@ -62,6 +53,18 @@
               <%=artist_name%> - <%=title%>
             </label>
           </li>
+        </script>
+
+        <script type="text/template" id="sound-stripe-new-template">
+          <form id="new-sound-stripe" action="#">
+            <img id="image-preview">
+            <input type="textbox", id="instagram-url" name="instagram-url" placeholder="instagram url" />
+            <input type="textbox", id="song-title" name="song" placeholder="artist - song title"/>
+            <ul id="song-search-results"></ul>
+            <input type="submit" value="Generate InstagramSong Link"/>
+            <div id="final-link">
+            </div>
+          </form>
         </script>
     </body>
 </html>
