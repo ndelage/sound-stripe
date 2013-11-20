@@ -33,7 +33,7 @@ var EchoNest = {
 function SoundStripeWizardView(selector, model) {
   this.$el = $(selector);
   this.model = model;
-  this.songResultTemplate = _.template("<li data-preview-url='<%=preview_url%>'><label><input type='radio' name='song'><%=artist_name%> - <%=title%><label></li>");
+  this.songResultTemplate = _.template($("#song-search-result-template").html());
 
   _.bindAll(this, 'updateInstagram', 'searchSong', 'generateThing')
   this.$el.find("#instagram-url").on('change', this.updateInstagram);
@@ -81,7 +81,7 @@ SoundStripeWizardView.prototype.generateThing = function(e) {
   e.preventDefault();
   var selectedSong = this.$el.find("input[name=song]:checked");
   var songUrl = selectedSong.parents("li").data("preview-url");
-  var url = "http://localhost:8000/?songUrl=" + songUrl + "&instagramId=" + this.model.instagramId;
+  var url = window.location.origin + "/?songUrl=" + songUrl + "&instagramId=" + this.model.instagramId;
   this.$el.find("#final-link").html("<a href='" + url + "'>" + url + "</a>");
 }
 
@@ -89,7 +89,7 @@ SoundStripeWizardView.prototype.generateThing = function(e) {
 function SoundStripeView(selector, model) {
   this.$el = $(selector);
   this.model = model;
-  this.template = _.template("<img id='instagram-image' src='<%=imageUrl%>'><audio autoplay=true src='<%=songUrl%>'></audio>");
+  this.template = _.template($("#sound-stripe-template").html());
 }
 
 SoundStripeView.prototype.render = function() {

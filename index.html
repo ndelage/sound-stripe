@@ -50,5 +50,18 @@
             g.src='//www.google-analytics.com/ga.js';
             s.parentNode.insertBefore(g,s)}(document,'script'));
         </script>
+
+        <script type="text/template" id="sound-stripe-template">
+          <img id="instagram-image" src="<%=imageUrl%>"/>
+          <audio autoplay=true src="<%=songUrl%>"></audio>
+        </script>
+
+        <script type="text/template" id="song-search-result-template">
+          <li data-preview-url='<%=preview_url%>'>
+            <label><input type='radio' name='song'>
+              <%=artist_name%> - <%=title%>
+            </label>
+          </li>
+        </script>
     </body>
 </html>
