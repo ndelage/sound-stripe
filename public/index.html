@@ -20,6 +20,9 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
+        <div id="new-profile">
+        </div>
+
         <div id="sound-stripe-builder">
         </div>
 
@@ -32,6 +35,8 @@
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.1.min.js"><\/script>')</script>
 
         <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
+        <script src="js/typeahead.min.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 
@@ -57,8 +62,7 @@
 
         <script type="text/template" id="sound-stripe-new-template">
           <form id="new-sound-stripe" action="#">
-            <img id="image-preview">
-            <input type="url" required id="instagram-url" name="instagram-url" placeholder="instagram url" />
+            <img id="image-preview" src="<%=preview_url%>" />
             <input type="search" required id="song-title" name="song" placeholder="artist - song title"/>
             <ul id="song-search-results"></ul>
             <input type="submit" value="Generate SoundStripe Link"/>
@@ -69,6 +73,22 @@
 
         <script type="text/template" id="sound-stripe-link-template">
           <a target="_blank" href="<%=url%>"><%=url%></a>
+        </script>
+
+        <script type="text/template" id="instagram-user-search-results-template">
+          <div class="result">
+            <img src="<%=avatar%>"/>
+            <%=value%>
+          </div>
+        </script>
+
+        <script type="text/template" id="new-profile-template">
+          <form id="new-instagram-profile">
+            <label>
+              Instagram Username
+              <input type="text" id="username"/>
+            </label>
+          </form>
         </script>
     </body>
 </html>
