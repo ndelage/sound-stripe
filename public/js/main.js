@@ -99,12 +99,13 @@ function SoundStripeFormView(selector, model, profile) {
   this.thumbnailTemplate = _.template($("#image-thumbnail-template").html());
   this.oldQuery = null;
 
-  this.render();
 
-  _.bindAll(this, 'searchSong',
+  _.bindAll(this, 'render',
+                  'searchSong',
                   'generateLink',
                   'selectSong');
 
+  $(window).on('profile:instagrams-loaded', this.render);
   this.$el.on("input", "#song-title", _.debounce(this.searchSong, 500));
   this.$el.on("input change", "#song-search-results input", this.selectSong);
 
@@ -113,22 +114,14 @@ function SoundStripeFormView(selector, model, profile) {
 
 
 SoundStripeFormView.prototype.render = function(e) {
-  var self = this;
-  Instagram.recentPhotos(this.profile.userId).done(function(resp) {
-    var photos = _.map(resp.data, function(media) {
-      return {url: media.link};
-    });
+  var html = $(this.template({preview_url: this.profile.instagrams[0].imageUrl()}));
 
-    var url = photos[0].url;
-    self.model.instagram.loadUrl(url);
-    var html = $(self.template({preview_url: self.model.instagram.imageUrl()}));
-    for(var i=1; i < 6; i++ ) {
-      var instagram = new InstagramPost(photos[i].url);
+  for(var i=1; i < 6; i++ ) {
+    var instagram = this.profile.instagrams[i];
 
-      html.find("#thumbnail-strip").append(self.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
-    }
-    self.$el.html(html);
-  });
+    html.find("#thumbnail-strip").append(this.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
+  }
+  this.$el.html(html);
 }
 
 SoundStripeFormView.prototype.searchSong = function(e) {
@@ -217,6 +210,8 @@ function getParameterByName(name) {
 function SoundStripeProfile() {
   this.userId = null;
   this.loadInstagramUsername();
+  this.instagrams = [];
+  this.loadRecentInstagrams();
 }
 
 SoundStripeProfile.prototype.loadInstagramUsername = function() {
@@ -225,6 +220,17 @@ SoundStripeProfile.prototype.loadInstagramUsername = function() {
 
 SoundStripeProfile.prototype.complete = function() {
   return this.userId;
+}
+
+SoundStripeProfile.prototype.loadRecentInstagrams = function() {
+  var self = this;
+  Instagram.recentPhotos(this.userId).done(function(resp) {
+    self.instagrams = _.map(resp.data, function(media) {
+      return new InstagramPost(media.link);
+    });
+
+    $(window).trigger("profile:instagrams-loaded");
+  });
 }
 
 function NewSoundStripeProfileView(selector, model) {
