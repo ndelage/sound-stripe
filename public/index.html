@@ -20,14 +20,16 @@
             <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
         <![endif]-->
 
-        <div id="new-profile">
-        </div>
+        <div id="container">
+          <div id="new-profile">
+          </div>
 
-        <div id="sound-stripe-builder">
-        </div>
+          <div id="sound-stripe-builder">
+          </div>
 
-        <div id="sound-stripe-presentation">
-          <img src="/img/ajax-loader.gif" id="spinner"/>
+          <div id="sound-stripe-presentation">
+            <img src="/img/ajax-loader.gif" id="spinner"/>
+          </div>
         </div>
 
 
@@ -63,12 +65,17 @@
         <script type="text/template" id="sound-stripe-new-template">
           <form id="new-sound-stripe" action="#">
             <img id="image-preview" src="<%=preview_url%>" />
+            <ul id="thumbnail-strip"></ul>
             <input type="search" required id="song-title" name="song" placeholder="artist - song title"/>
             <ul id="song-search-results"></ul>
             <input type="submit" value="Generate SoundStripe Link"/>
             <div id="final-link">
             </div>
           </form>
+        </script>
+
+        <script type="text/template" id="image-thumbnail-template">
+          <li><img src="<%=preview_url%>"/></li>
         </script>
 
         <script type="text/template" id="sound-stripe-link-template">

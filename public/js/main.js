@@ -1,29 +1,49 @@
-function SoundStripe(instagramId, songUrl) {
-  this.instagramId = instagramId;
-  this.songUrl = songUrl;
-}
-
-SoundStripe.prototype.loadInstagramUrl = function(url) {
-  var matches = /p\/(\w+)/.exec(url);
-  if(matches && matches.length > 1) {
-    this.instagramId = matches[1];
+function InstagramPost(urlOrId) {
+  if(urlOrId && urlOrId.indexOf("http://") != -1) {
+    this.instagramId = this.extractInstagramId(urlOrId);
+  } else {
+    this.instagramId = urlOrId;
   }
 }
 
-SoundStripe.prototype.imageUrl = function() {
-  if(this.instagramId) {
-    return "http://instagr.am/p/" + this.instagramId + "/media/?size=m";
+InstagramPost.prototype.loadUrl = function(url) {
+  this.instagramId = this.extractInstagramId(url);
+}
+
+InstagramPost.prototype.extractInstagramId = function(url) {
+  var matches = /p\/(\w+)/.exec(url);
+  if(matches && matches.length > 1) {
+    return matches[1];
   } else {
     return null;
   }
 }
 
+InstagramPost.prototype.imageUrl = function(size) {
+  size = size || "m";
+
+  if(this.instagramId) {
+    return "http://instagr.am/p/" + this.instagramId + "/media/?size=" + size;
+  } else {
+    return null;
+  }
+}
+
+InstagramPost.prototype.valid = function(size) {
+  return this.instagramId;
+}
+
+function SoundStripe(instagram, songUrl) {
+  this.instagram = instagram;
+  this.songUrl = songUrl;
+}
+
 SoundStripe.prototype.attributes = function() {
-  return {songUrl: this.songUrl, imageUrl: this.imageUrl()};
+  return {songUrl: this.songUrl, imageUrl: this.instagram.imageUrl()};
 }
 
 SoundStripe.prototype.valid = function() {
-  return this.songUrl && this.instagramId;
+  return this.songUrl && this.instagram.valid();
 }
 
 var EchoNest = {
@@ -69,12 +89,14 @@ var Instagram = {
   }
 }
 
-function SoundStripeFormView(selector, model) {
+function SoundStripeFormView(selector, model, profile) {
   this.$el = $(selector);
   this.model = model;
+  this.profile = profile;
   this.template = _.template($("#sound-stripe-new-template").html());
   this.songResultTemplate = _.template($("#song-search-result-template").html());
   this.linkTemplate = _.template($("#sound-stripe-link-template").html());
+  this.thumbnailTemplate = _.template($("#image-thumbnail-template").html());
   this.oldQuery = null;
 
   this.render();
@@ -92,14 +114,20 @@ function SoundStripeFormView(selector, model) {
 
 SoundStripeFormView.prototype.render = function(e) {
   var self = this;
-  Instagram.recentPhotos(profile.userId).done(function(resp) {
+  Instagram.recentPhotos(this.profile.userId).done(function(resp) {
     var photos = _.map(resp.data, function(media) {
       return {url: media.link};
     });
 
     var url = photos[0].url;
-    self.model.loadInstagramUrl(url);
-    self.$el.html(self.template({preview_url: self.model.imageUrl()}));
+    self.model.instagram.loadUrl(url);
+    var html = $(self.template({preview_url: self.model.instagram.imageUrl()}));
+    for(var i=1; i < 6; i++ ) {
+      var instagram = new InstagramPost(photos[i].url);
+
+      html.find("#thumbnail-strip").append(self.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
+    }
+    self.$el.html(html);
   });
 }
 
@@ -136,7 +164,6 @@ SoundStripeFormView.prototype.updateSearchResults = function(songs) {
 
 
 SoundStripeFormView.prototype.selectSong = function(e) {
-  console.log("here");
   var selectedSong = this.$el.find("input[name=song]:checked");
   this.model.songUrl = selectedSong.parents("li").data("preview-url");
 };
@@ -148,11 +175,11 @@ SoundStripeFormView.prototype.generateLink = function(e) {
               "/?songUrl=" +
               this.model.songUrl +
               "&instagramId=" +
-              this.model.instagramId;
+              this.model.instagram.instagramId;
 
     this.$el.find("#final-link").html(this.linkTemplate({url: url}));
   } else {
-    alert("Not so fast! Enter a instagram url and pick a song first!");
+    alert("Not so fast! Pick a song and Instagram photo first!");
   }
 }
 
@@ -241,28 +268,29 @@ NewSoundStripeProfileView.prototype.saveInstagramUsername = function(e, datum, n
   $(window).trigger("profile-complete");
 }
 
-var profile;
-$(document).ready(function() {
-  profile = new SoundStripeProfile();
-  var photoSong = new SoundStripe();
+function SoundStripeApp() {
+  this.profile = new SoundStripeProfile();
+  this.soundStripe = new SoundStripe();
 
-  if(getParameterByName("instagramId") &&
-            getParameterByName("songUrl")) {
+  this.soundStripe.instagram = new InstagramPost(getParameterByName("instagramId"));
+  this.soundStripe.songUrl = getParameterByName("songUrl");
 
-    var model = new SoundStripe(getParameterByName("instagramId"),
-                                getParameterByName("songUrl"));
-    var view = new SoundStripeView("#sound-stripe-presentation", model);
-  } else if(!profile.complete()) {
-    var view = new NewSoundStripeProfileView("#new-profile", profile);
-
+  if(this.soundStripe.valid()) {
+    var view = new SoundStripeView("#sound-stripe-presentation", this.soundStripe);
+  } else if(!this.profile.complete()) {
+    var view = new NewSoundStripeProfileView("#new-profile", this.profile);
   } else {
-    var view = new SoundStripeFormView("#sound-stripe-builder", photoSong);
+    var view = new SoundStripeFormView("#sound-stripe-builder", this.soundStripe, this.profile);
   }
 
+  var self;
   $(window).on("profile-complete", function() {
     $("#new-profile").hide();
-    var view = new SoundStripeFormView("#sound-stripe-builder", photoSong);
-
+    var view = new SoundStripeFormView("#sound-stripe-builder", self.soundStripe);
   });
-});
+}
 
+var app;
+$(document).ready(function() {
+  app = new SoundStripeApp();
+});

@@ -60,22 +60,34 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+#container {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 #sound-stripe-builder input {
   display: block;
-  margin: 20px;
+  margin: 10px 0 10px 0;
+  width: 100%;
+}
+
+#song-search-results {
+  list-style-type: none;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+}
+
+#song-search-results input {
+  width: auto;
+  display: inline;
 }
 
 #image-preview {
   width: 306px;
   height: 306px;
-}
-
-#song-search-results {
-  list-style-type: none;
-}
-
-#song-search-results input {
-  display: inline;
 }
 
 #sound-stripe-presentation {
@@ -98,6 +110,22 @@ textarea {
 
 #new-instagram-profile .result img {
   display: inline;
+  width: 50px;
+  height: 50px;
+}
+
+#thumbnail-strip {
+  list-style-type: none;
+  margin-top: .5em;
+  padding: 0;
+  text-align: center;
+}
+
+#thumbnail-strip li {
+  display: inline;
+}
+
+#thumbnail-strip li img {
   width: 50px;
   height: 50px;
 }
