@@ -190,7 +190,6 @@ SoundStripeFormView.prototype.generateLink = function(e) {
     } else {
       var self = this;
       shortenUrl(url, function(sUrl) {
-        debugger;
         self.$el.find("#final-link").html(self.linkTemplate({url: sUrl}));
       });
     }
@@ -263,14 +262,16 @@ SoundStripeProfile.prototype.complete = function() {
 }
 
 SoundStripeProfile.prototype.loadRecentInstagrams = function() {
-  var self = this;
-  Instagram.recentPhotos(this.userId).done(function(resp) {
-    self.instagrams = _.map(resp.data, function(media) {
-      return new InstagramPost(media.link);
-    });
+  if(this.userId) {
+    var self = this;
+    Instagram.recentPhotos(this.userId).done(function(resp) {
+      self.instagrams = _.map(resp.data, function(media) {
+        return new InstagramPost(media.link);
+      });
 
-    $(window).trigger("profile:instagrams-loaded");
-  });
+      $(window).trigger("profile:instagrams-loaded");
+    });
+  }
 }
 
 function NewSoundStripeProfileView(selector, model) {
@@ -287,6 +288,7 @@ function NewSoundStripeProfileView(selector, model) {
 
 NewSoundStripeProfileView.prototype.render = function() {
   this.$el.html(this.template());
+  this.$el.show();
   var set = {
     name: "instagram-users",
     template: this.resultsTemplate,
@@ -311,6 +313,7 @@ NewSoundStripeProfileView.prototype.render = function() {
 NewSoundStripeProfileView.prototype.saveInstagramUsername = function(e, datum, name) {
   this.model.userId = datum.id;
   $.cookie('instagram_userId', this.model.userId);
+  this.model.loadRecentInstagrams();
   $(window).trigger("profile-complete");
 }
 
@@ -329,10 +332,10 @@ function SoundStripeApp() {
     var view = new SoundStripeFormView("#sound-stripe-builder", this.soundStripe, this.profile);
   }
 
-  var self;
+  var self = this;
   $(window).on("profile-complete", function() {
     $("#new-profile").hide();
-    var view = new SoundStripeFormView("#sound-stripe-builder", self.soundStripe);
+    var view = new SoundStripeFormView("#sound-stripe-builder", self.soundStripe, self.profile);
   });
 }
 
