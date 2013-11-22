@@ -112,6 +112,10 @@ textarea {
   height: 306px;
 }
 
+.make-one {
+  margin-top: 2em;
+}
+
 #new-instagram-profile .result img {
   display: inline;
   width: 50px;
