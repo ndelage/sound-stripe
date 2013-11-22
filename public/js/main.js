@@ -216,6 +216,7 @@ SoundStripeView.prototype.render = function() {
   }, 500);
 
   $el.append(this.template(this.model.attributes()));
+
   $el.find("audio").on("playing", function() {
     clearTimeout(spinnerDisplayID);
     $el.find("#spinner").hide();
