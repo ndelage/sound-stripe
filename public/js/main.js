@@ -109,19 +109,34 @@ function SoundStripeFormView(selector, model, profile) {
   this.$el.on("input", "#song-title", _.debounce(this.searchSong, 500));
   this.$el.on("input change", "#song-search-results input", this.selectSong);
 
+  var self = this;
+  this.$el.on("click", "#thumbnail-strip li", function(e) {
+    var newPhoto = self.profile.instagrams[$(this).index()];
+    self.changePhoto(newPhoto);
+  });
+
   this.$el.on('submit', "form", this.generateLink);
 }
 
 
 SoundStripeFormView.prototype.render = function(e) {
-  var html = $(this.template({preview_url: this.profile.instagrams[0].imageUrl()}));
+  if(!this.model.instagram.valid()) {
+    this.model.instagram = this.profile.instagrams[0];
+  }
 
-  for(var i=1; i < 6; i++ ) {
+  var html = $(this.template({preview_url: this.model.instagram.imageUrl()}));
+
+  for(var i=0; i < 5; i++ ) {
     var instagram = this.profile.instagrams[i];
 
     html.find("#thumbnail-strip").append(this.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
   }
   this.$el.html(html);
+}
+
+SoundStripeFormView.prototype.changePhoto = function(newPhoto) {
+  this.model.instagram = newPhoto;
+  this.render();
 }
 
 SoundStripeFormView.prototype.searchSong = function(e) {
@@ -170,7 +185,16 @@ SoundStripeFormView.prototype.generateLink = function(e) {
               "&instagramId=" +
               this.model.instagram.instagramId;
 
-    this.$el.find("#final-link").html(this.linkTemplate({url: url}));
+    if(window.location.origin.indexOf("localhost") != -1) {
+      this.$el.find("#final-link").html(this.linkTemplate({url: url}));
+    } else {
+      var self = this;
+      shortenUrl(url, function(sUrl) {
+        debugger;
+        self.$el.find("#final-link").html(self.linkTemplate({url: sUrl}));
+      });
+    }
+
   } else {
     alert("Not so fast! Pick a song and Instagram photo first!");
   }
@@ -204,7 +228,23 @@ function getParameterByName(name) {
   name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
   var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
   results = regex.exec(location.search);
-  return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+  return results == null ? null : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function shortenUrl(long_url, func) {
+    $.getJSON(
+        "http://api.bitly.com/v3/shorten?callback=?",
+        { 
+            "format": "json",
+            "apiKey": "R_24c6ad54cdfd8a925a255d461005ee75",
+            "login": "ndelage",
+            "longUrl": long_url
+        },
+        function(response)
+        {
+            func(response.data.url);
+        }
+    );
 }
 
 function SoundStripeProfile() {
