@@ -108,7 +108,8 @@ textarea {
 }
 
 #instagram-image {
-  display: none;
+  width: 306px;
+  height: 306px;
 }
 
 #new-instagram-profile .result img {
