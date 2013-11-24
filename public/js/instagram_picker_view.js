@@ -7,6 +7,8 @@ function InstagramPickerView(el, model, profile) {
 
   _.bindAll(this, 'render');
 
+  $(window).on('profile:instagrams-loaded', this.render);
+
   var self = this;
   this.$el.on("click", "#thumbnail-strip li", function(e) {
     var newPhoto = self.profile.instagrams[$(this).index()];
@@ -15,7 +17,9 @@ function InstagramPickerView(el, model, profile) {
 }
 
 InstagramPickerView.prototype.render = function(e) {
-  $(window).on('profile:instagrams-loaded', function() {
+  if(this.profile.instagrams && this.profile.instagrams.length > 0) {
+    // TODO: This should be done by the SoundStripe model, triggered by a change
+    // in the profile model
     if(!this.model.instagram.valid()) {
       this.model.instagram = this.profile.instagrams[0];
     }
@@ -23,12 +27,11 @@ InstagramPickerView.prototype.render = function(e) {
     this.$el.html(this.template({preview_url: this.model.instagram.imageUrl()}))
     var thumbnailStrip = this.$el.find("#thumbnail-strip");
 
-    for(var i=0; i < 5; i++ ) {
-      var instagram = this.profile.instagrams[i];
-
+    var alternatives = _.first(this.profile.instagrams, 5);
+    _.each(alternatives, function(instagram) {
       thumbnailStrip.append(this.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
-    }
-  }.bind(this));
+    }.bind(this));
+  }
 }
 
 InstagramPickerView.prototype.changePhoto = function(newPhoto) {
