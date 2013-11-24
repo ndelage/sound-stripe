@@ -43,6 +43,24 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.3.1/jquery.cookie.min.js"></script>
         <script src="js/typeahead.min.js"></script>
         <script src="js/plugins.js"></script>
+
+        <!-- Utils -->
+        <script src="js/echonest.js"></script>
+        <script src="js/instagram.js"></script>
+        <script src="js/helpers.js"></script>
+
+        <!-- Models -->
+        <script src="js/instagram_post.js"></script>
+        <script src="js/sound_stripe.js"></script>
+        <script src="js/sound_stripe_profile.js"></script>
+
+        <!-- Views -->
+        <script src="js/sound_stripe_form_view.js"></script>
+        <script src="js/sound_stripe_profile_form_view.js"></script>
+        <script src="js/sound_stripe_view.js"></script>
+
+        <!-- App -->
+        <script src="js/sound_stripe_app.js"></script>
         <script src="js/main.js"></script>
 
         <script>
@@ -60,7 +78,7 @@
 
         <script type="text/template" id="song-search-result-template">
           <li data-preview-url='<%=preview_url%>'>
-            <label><input type='radio' name='song'>
+            <label><input type='radio' name='song' <%=checked%>>
               <%=artist_name%> - <%=title%>
             </label>
           </li>
