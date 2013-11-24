@@ -1,8 +1,0 @@
-https://instagram.com/oauth/authorize/?client_id=664c97e51cdf40e29b9a9dff24a420d5&redirect_uri=http://localhost:9292&response_type=code
-
-
-curl -F 'client_id=664c97e51cdf40e29b9a9dff24a420d5' \
--F 'client_secret=fc35700d887440c4928a310b0d0bb75d' \
--F 'grant_type=authorization_code' \
--F 'redirect_uri=http://immense-fjord-8009.herokuapp.com/' \
--F 'code=2946ec47f2b84624a61f0af0bcc6e015' \https://api.instagram.com/oauth/access\_token
