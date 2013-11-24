@@ -16,6 +16,7 @@ function SoundStripeFormView(el, model, profile) {
 SoundStripeFormView.prototype.render = function(e) {
   var $html = $(this.template());
   var instagramPickerView = new InstagramPickerView($html.find("#instagram-picker"), this.model, this.profile);
+  instagramPickerView.render();
 
   var songPickerView = new SongPickerView($html.find("#song-picker"), this.model, this.profile);
   songPickerView.render();

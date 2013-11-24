@@ -7,8 +7,6 @@ function InstagramPickerView(el, model, profile) {
 
   _.bindAll(this, 'render');
 
-  $(window).on('profile:instagrams-loaded', this.render);
-
   var self = this;
   this.$el.on("click", "#thumbnail-strip li", function(e) {
     var newPhoto = self.profile.instagrams[$(this).index()];
@@ -17,18 +15,20 @@ function InstagramPickerView(el, model, profile) {
 }
 
 InstagramPickerView.prototype.render = function(e) {
-  if(!this.model.instagram.valid()) {
-    this.model.instagram = this.profile.instagrams[0];
-  }
+  $(window).on('profile:instagrams-loaded', function() {
+    if(!this.model.instagram.valid()) {
+      this.model.instagram = this.profile.instagrams[0];
+    }
 
-  this.$el.html(this.template({preview_url: this.model.instagram.imageUrl()}))
-  var thumbnailStrip = this.$el.find("#thumbnail-strip");
+    this.$el.html(this.template({preview_url: this.model.instagram.imageUrl()}))
+    var thumbnailStrip = this.$el.find("#thumbnail-strip");
 
-  for(var i=0; i < 5; i++ ) {
-    var instagram = this.profile.instagrams[i];
+    for(var i=0; i < 5; i++ ) {
+      var instagram = this.profile.instagrams[i];
 
-    thumbnailStrip.append(this.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
-  }
+      thumbnailStrip.append(this.thumbnailTemplate({preview_url: instagram.imageUrl('t')}));
+    }
+  }.bind(this));
 }
 
 InstagramPickerView.prototype.changePhoto = function(newPhoto) {
