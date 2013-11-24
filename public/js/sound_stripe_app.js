@@ -10,7 +10,7 @@ function SoundStripeApp() {
   } else if(!this.profile.complete()) {
     var view = new NewSoundStripeProfileView("#new-profile", this.profile);
   } else {
-    var view = new SoundStripeFormView("#sound-stripe-builder", this.soundStripe, this.profile);
+    var view = new SoundStripeFormView($("#sound-stripe-builder"), this.soundStripe, this.profile);
   }
 
   var self = this;

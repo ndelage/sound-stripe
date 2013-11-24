@@ -55,6 +55,8 @@
         <script src="js/sound_stripe_profile.js"></script>
 
         <!-- Views -->
+        <script src="js/instagram_picker_view.js"></script>
+        <script src="js/song_picker_view.js"></script>
         <script src="js/sound_stripe_form_view.js"></script>
         <script src="js/sound_stripe_profile_form_view.js"></script>
         <script src="js/sound_stripe_view.js"></script>
@@ -86,15 +88,25 @@
 
         <script type="text/template" id="sound-stripe-new-template">
           <form id="new-sound-stripe" action="#">
-            <img id="image-preview" src="<%=preview_url%>" />
-            <ul id="thumbnail-strip"></ul>
-            <input type="search" required id="song-title" name="song" placeholder="artist - song title"/>
-            <ul id="song-search-results"></ul>
+            <div id="instagram-picker"></div>
+            <div id="song-picker"></div>
+
             <input type="submit" value="MAKE IT SING"/>
             <div id="final-link">
             </div>
           </form>
         </script>
+
+        <script type="text/template" id="instagram-picker-template">
+          <img id="image-preview" src="<%=preview_url%>" />
+          <ul id="thumbnail-strip"></ul>
+        </script>
+
+        <script type="text/template" id="song-picker-template">
+          <input type="search" required id="song-title" name="song" placeholder="artist - song title"/>
+          <ul id="song-search-results"></ul>
+        </script>
+
 
         <script type="text/template" id="image-thumbnail-template">
           <li><img src="<%=preview_url%>"/></li>
