@@ -1,5 +1,5 @@
-function SoundStripeView(selector, model) {
-  this.$el = $(selector);
+function SoundStripeView(el, model) {
+  this.$el = el;
   this.model = model;
   this.template = _.template($("#sound-stripe-template").html());
   this.render();

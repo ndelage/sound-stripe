@@ -1,8 +1,8 @@
-function NewSoundStripeProfileView(selector, model) {
+function NewSoundStripeProfileView(el, model) {
   _.bindAll(this, 'saveInstagramUsername');
 
   this.model = model;
-  this.$el = $(selector);
+  this.$el = el;
   this.template = _.template($("#new-profile-template").html());
   this.resultsTemplate = _.template($("#instagram-user-search-results-template").html());
   this.$el.on('typeahead:selected', "#username", this.saveInstagramUsername);
