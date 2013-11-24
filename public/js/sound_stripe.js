@@ -27,7 +27,7 @@ SoundStripe.prototype.generateUrl = function(e) {
       shortenUrl(url, function(sUrl) {
         this.url = sUrl;
         $(window).trigger("soundStripe:urlChanged");
-      });
+      }.bind(this));
     }
   }
 };
